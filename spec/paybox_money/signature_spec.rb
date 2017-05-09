@@ -3,7 +3,6 @@ require 'spec_helper'
 RSpec.describe PayboxMoney::Signature do
 
   secret_key = 'mypasskey'
-  salt = '9imM909TH820jwk387'
   url = 'script.php'
   params = {
     pg_t_param: 'value3',
@@ -12,7 +11,8 @@ RSpec.describe PayboxMoney::Signature do
       pg_q_subparam: 'subvalue2',
       pg_m_subparam: 'subvalue1'
     },
-    pg_b_param: 'value2'
+    pg_b_param: 'value2',
+    pg_salt: '9imM909TH820jwk387'
   }
 
   result_values = 'script.php;value1;value2;9imM909TH820jwk387;value3;subvalue1;subvalue2;mypasskey'
@@ -22,7 +22,6 @@ RSpec.describe PayboxMoney::Signature do
     expect(
       described_class.new(
         secret_key: secret_key,
-        salt: salt,
         url: url,
         params: params
       ).string_values
@@ -33,7 +32,6 @@ RSpec.describe PayboxMoney::Signature do
     expect(
       described_class.new(
         secret_key: secret_key,
-        salt: salt,
         url: url,
         params: params
       ).result

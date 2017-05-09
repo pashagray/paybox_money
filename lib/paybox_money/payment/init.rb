@@ -1,4 +1,5 @@
 require 'nokogiri'
+require 'securerandom'
 
 module PayboxMoney
   module Payment
@@ -51,10 +52,18 @@ module PayboxMoney
         params
           .select { |p| PERMITTED_PARAMS.include?(p) }
           .each { |p| instance_variable_set("@#{p[0]}", p[1])}
+
+        @pg_salt ||= SecureRandom.hex(10)
+        @pg_sig ||= Signature.new(
+          secret_key: 'secret_key_1',
+          url: 'init_payment.php',
+          params: to_hash
+        )
+
         if missing_params.any?
           raise StandardError, "#{missing_params} is required, but not set"
         else
-          # request!
+          request!
         end
       end
 
@@ -66,12 +75,24 @@ module PayboxMoney
         !!send(param)
       end
 
+      def to_hash
+        PERMITTED_PARAMS
+          .map { |p| [p, self.send(p)] if param_set?(p) }
+          .compact
+          .to_h
+      end
+
       def to_xml
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.request do
-            PERMITTED_PARAMS.each { |p| xml.send(p, self.send(p)) if param_set?(p) }
+            PERMITTED_PARAMS
+              .each { |p| xml.send(p, self.send(p)) if param_set?(p) }
           end
         end
+      end
+
+      def request!
+
       end
     end
   end

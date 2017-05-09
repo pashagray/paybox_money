@@ -1,10 +1,10 @@
 module PayboxMoney
 
   class Signature
-    def initialize(secret_key:, salt:, url:, params:)
+    def initialize(secret_key:, url:, params:)
       @secret_key = secret_key
       @url = url
-      @params = params.merge(pg_salt: salt)
+      @params = params
     end
 
     def sorted_params
