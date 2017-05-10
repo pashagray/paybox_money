@@ -1,10 +1,11 @@
 require 'nokogiri'
+require 'net/http'
+require 'uri'
 require 'securerandom'
 
 module PayboxMoney
   module Payment
     class Init
-      REQUEST_URL = 'https://www.paybox.kz/init_payment.php'
       PERMITTED_PARAMS = %i(
         pg_merchant_id
         pg_order_id
@@ -55,10 +56,10 @@ module PayboxMoney
 
         @pg_salt ||= SecureRandom.hex(10)
         @pg_sig ||= Signature.new(
-          secret_key: 'secret_key_1',
+          secret_key: 'RmRVKviOifpqtexL',
           url: 'init_payment.php',
           params: to_hash
-        )
+        ).result
 
         if missing_params.any?
           raise StandardError, "#{missing_params} is required, but not set"
@@ -89,10 +90,18 @@ module PayboxMoney
               .each { |p| xml.send(p, self.send(p)) if param_set?(p) }
           end
         end
+        builder.to_xml
       end
 
       def request!
-
+        uri = URI('https://www.paybox.kz/init_payment.php')
+        res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+          req = Net::HTTP::Post.new(uri)
+          # req['Content-Type'] = 'application/xml; charset=utf-8;'
+          req.body = to_xml
+          http.request(req)
+          # req.body
+        end
       end
     end
   end
