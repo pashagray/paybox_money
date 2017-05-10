@@ -83,24 +83,12 @@ module PayboxMoney
           .to_h
       end
 
-      def to_xml
-        builder = Nokogiri::XML::Builder.new do |xml|
-          xml.request do
-            PERMITTED_PARAMS
-              .each { |p| xml.send(p, self.send(p)) if param_set?(p) }
-          end
-        end
-        builder.to_xml
-      end
-
       def request!
         uri = URI('https://www.paybox.kz/init_payment.php')
         res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
           req = Net::HTTP::Post.new(uri)
-          # req['Content-Type'] = 'application/xml; charset=utf-8;'
-          req.body = to_xml
+          req.set_form_data(self.to_hash)
           http.request(req)
-          # req.body
         end
       end
     end
