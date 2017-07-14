@@ -1,5 +1,12 @@
 module PayboxMoney
-
+  #
+  # Accept params and data to sort as required by paybox.money API and
+  # generate signature based on these data.
+  #
+  # Example:
+  # sig = Signature.new(url: 'payment_gateway', params: { pg_order_id: 123 })
+  # sig.result # => 'fwf32r32g83f0n'
+  #
   class Signature
     def initialize(secret_key:, url:, params:)
       @secret_key = secret_key

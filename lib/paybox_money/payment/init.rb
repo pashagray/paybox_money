@@ -1,4 +1,5 @@
 require 'nokogiri'
+require 'nori'
 require 'net/http'
 require 'uri'
 require 'securerandom'
@@ -7,62 +8,71 @@ module PayboxMoney
   module Payment
     class Init
       PERMITTED_PARAMS = %i(
-        pg_merchant_id
-        pg_order_id
-        pg_amount
-        pg_currency
-        pg_chech_url
-        pg_result_url
-        pg_refund_url
-        pg_capture_url
-        pg_request_method
-        pg_success_url
-        pg_failure_url
-        pg_success_url_method
-        pg_failure_url_method
-        pg_state_url
-        pg_state_url_method
-        pg_site_url
-        pg_payment_system
-        pg_lifetime
-        pg_encoding
-        pg_description
-        pg_user_phone
-        pg_user_contact_email
-        pg_user_email
-        pg_user_ip
-        pg_language
-        pg_testing_mode
-        pg_recurring_start
-        pg_recurring_lifetime
-        pg_salt
-        pg_sig
+        merchant_id
+        order_id
+        amount
+        currency
+        chech_url
+        result_url
+        refund_url
+        capture_url
+        request_method
+        success_url
+        failure_url
+        success_url_method
+        failure_url_method
+        state_url
+        state_url_method
+        site_url
+        payment_system
+        lifetime
+        encoding
+        description
+        user_phone
+        user_contact_email
+        user_email
+        user_ip
+        language
+        testing_mode
+        recurring_start
+        recurring_lifetime
+        salt
+        sig
+        secret_key
       )
 
       REQUIRED_PARAMS = %i(
-        pg_merchant_id
-        pg_amount
-        pg_description
-        pg_salt
-        pg_sig
+        merchant_id
+        amount
+        description
+        salt
+        sig
+        secret_key
       )
 
-      attr_reader *PERMITTED_PARAMS
+      RESPONSE_PARAMS = %i(
+        response
+      )
+
+      attr_reader *(PERMITTED_PARAMS + RESPONSE_PARAMS)
 
       def initialize(params = {})
         params
           .select { |p| PERMITTED_PARAMS.include?(p) }
-          .each { |p| instance_variable_set("@#{p[0]}", p[1])}
+          .each { |p| instance_variable_set("@#{p[0]}", p[1]) }
 
-        @pg_salt ||= SecureRandom.hex(10)
-        @pg_sig ||= Signature.new(
-          secret_key: 'RmRVKviOifpqtexL',
+        @salt ||= SecureRandom.hex(10)
+        @sig ||= Signature.new(
+          secret_key: @secret_key,
           url: 'init_payment.php',
           params: to_hash
         ).result
 
         if missing_params.any?
-          raise StandardError, "#{missing_params} is required, but not set"
+          raise(
+            StandardError,
+            "#{missing_params} is required, but not set"
+          )
         else
           request!
         end
@@ -78,18 +88,19 @@ module PayboxMoney
 
       def to_hash
         PERMITTED_PARAMS
-          .map { |p| [p, self.send(p)] if param_set?(p) }
+          .map { |p| ["pg_#{p}", send(p)] if param_set?(p) }
           .compact
           .to_h
       end
 
       def request!
         uri = URI('https://www.paybox.kz/init_payment.php')
-        res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+        res = Net::HTTP.start(uri.host, uri.port, use_ssl: true, debug_output: $stdout) do |http|
           req = Net::HTTP::Post.new(uri)
-          req.set_form_data(self.to_hash)
+          req.set_form_data(to_hash)
           http.request(req)
         end
+        @response = Nori.new.parse(res.body)
       end
     end
   end
