@@ -29,19 +29,30 @@ RSpec.describe PayboxMoney::Payment::Init do
       end.to raise_error(StandardError).with_message('[:merchant_id] is required, but not set')
     end
 
-    it 'sets params' do
+    it 'makes successful request' do
       init = PayboxMoney::Payment::Init.new(
         amount: '1000',
         description: 'Test',
         salt: 'asdlkhbfoadf',
         merchant_id: '500235',
         language: 'ru',
-        secret_key: 'RmRVKviOifptexL'
+        secret_key: 'RmRVKviOifpqtexL'
       )
 
-      puts init.to_hash
-      puts init.response
-      expect(init.response).to eq('asdlkhbfoadf')
+      expect(init.success?).to eq(true)
+    end
+
+    it 'makes unsuccessful request' do
+      init = PayboxMoney::Payment::Init.new(
+        amount: '1000',
+        description: 'Test',
+        salt: 'asdlkhbfoadf',
+        merchant_id: '500235',
+        language: 'ru',
+        secret_key: 'sdfsdfsd'
+      )
+
+      expect(init.success?).to eq(false)
     end
   end
 end

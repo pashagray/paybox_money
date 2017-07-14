@@ -51,7 +51,11 @@ module PayboxMoney
       )
 
       RESPONSE_PARAMS = %i(
-        response
+        status
+        redirect_url
+        redirect_url_type
+        error_code
+        error_description
       )
 
       attr_reader *(PERMITTED_PARAMS + RESPONSE_PARAMS)
@@ -93,14 +97,23 @@ module PayboxMoney
           .to_h
       end
 
+      def success?
+        status == 'ok'
+      end
+
       def request!
         uri = URI('https://www.paybox.kz/init_payment.php')
-        res = Net::HTTP.start(uri.host, uri.port, use_ssl: true, debug_output: $stdout) do |http|
+        res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
           req = Net::HTTP::Post.new(uri)
           req.set_form_data(to_hash)
           http.request(req)
         end
-        @response = Nori.new.parse(res.body)
+        build_response(res.body)
+      end
+
+      def build_response(response_body)
+        res = Nori.new.parse(response_body)['response']
+        res.each { |p| instance_variable_set("@#{p[0].sub('pg_', '')}", p[1]) }
       end
     end
   end
