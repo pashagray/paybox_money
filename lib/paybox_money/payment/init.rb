@@ -102,7 +102,7 @@ module PayboxMoney
       end
 
       def request!
-        uri = URI('https://www.paybox.kz/init_payment.php')
+        uri = URI(GATEWAY_INIT_PAYMENT)
         res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
           req = Net::HTTP::Post.new(uri)
           req.set_form_data(to_hash)
