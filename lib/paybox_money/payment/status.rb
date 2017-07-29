@@ -24,10 +24,10 @@ module PayboxMoney
           params: params
         ).result
         super(
-          PERMITTED_PARAMS,
-          REQUIRED_PARAMS,
-          STATUS_PAYMENT_URL,
-          params.merge(sig: sig)
+          permitted_params: PERMITTED_PARAMS,
+          required_params: REQUIRED_PARAMS,
+          url: STATUS_PAYMENT_URL,
+          params: params.merge(sig: sig)
         )
       end
     end

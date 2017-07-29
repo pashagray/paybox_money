@@ -1,16 +1,16 @@
 module PayboxMoney
   class ApiWrapper
-
     attr_reader :request, :response, :url
 
-    def initialize(permitted_params, required_params, url, params = {})
+    def initialize(permitted_params:, required_params:, url:, default_params:, params:)
       @url = url
-      @request = permitted_params.map { |p| ["pg_#{p}", params[p]] if params[p] }.compact.to_h
+      @params = default_params.merge(params)
+      @request = permitted_params.map { |p| ["pg_#{p}", @params[p]] if @params[p] }.compact.to_h
 
-      if (required_params - params.keys).any?
+      if (required_params - @params.keys).any?
         raise(
-          StandardError,
-          "#{(required_params - params.keys)} is required, but not set"
+          ParamsError,
+          "#{(required_params - @params.keys)} is required, but not set"
         )
       else
         request!

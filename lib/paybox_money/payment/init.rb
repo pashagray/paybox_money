@@ -56,10 +56,11 @@ module PayboxMoney
           params: params
         ).result
         super(
-          PERMITTED_PARAMS,
-          REQUIRED_PARAMS,
-          INIT_PAYMENT_URL,
-          params.merge(sig: sig)
+          permitted_params: PERMITTED_PARAMS,
+          required_params: REQUIRED_PARAMS,
+          url: INIT_PAYMENT_URL,
+          params: params.merge(sig: sig),
+          default_params: Config.default_params
         )
       end
     end
