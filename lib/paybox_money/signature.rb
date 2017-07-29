@@ -19,11 +19,12 @@ module PayboxMoney
     end
 
     def string_values
-      [@url, Utility.flatten_hash(sorted_params).values, @secret_key].join(';')
+      [@url, Utility.flatten_hash(sorted_params).values, @secret_key].flatten.join(';')
     end
 
     def result
       Digest::MD5.hexdigest(string_values)
     end
+
   end
 end
