@@ -1,28 +1,69 @@
 # PayboxMoney
+Тонкая обертка над сервисами [paybox.money](https://paybox.money/).
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/paybox_money`. To experiment with that code, run `bin/console` for an interactive prompt.
+## Установка
 
-TODO: Delete this and the text above, and describe your gem
-
-## Installation
-
-Add this line to your application's Gemfile:
+Добавьте гем в Gemfile:
 
 ```ruby
 gem 'paybox_money'
 ```
 
-And then execute:
+И затем установите:
 
     $ bundle
 
-Or install it yourself as:
+Или установите вручную:
 
     $ gem install paybox_money
 
-## Usage
+## Платежи (Payment)
+Стандартные платежи с переходом на платежный шлюз Paybox.
 
-TODO: Write usage instructions here
+### Инициализация платежа (Payment::Init)
+
+Пример инициализации платежа.
+
+```ruby
+init = PayboxMoney::Payment::Init.new(
+  amount: '1000', # Amount to pay
+  description: 'Test', # Payment description
+  merchant_id: 'your_merchant_id', # Provided by paybox
+  language: 'ru', # Gateway interface language
+  secret_key: 'your_secret_key' # Provided by paybox
+)
+
+if init.success?
+  init.response.redirect_url # "https://www.paybox.kz/payment.html?customer=bf2e2..."
+else
+  init.response.error_description # "Неверный номер магазина"
+end
+```
+
+Любые параметры можно вынести в параметры по умолчанию, чтобы не передавать их постоянно. При использовании rails лучше всего создать файл `paybox_money.rb` в `config/initializers`. Например:
+```ruby
+PayboxMoney::Payment.default_params(
+  {
+    merchant_id: 'your_merchant_id',
+    language: 'ru',
+    secret_key: 'your_secret_key'
+  }
+)
+```
+Теперь при инициализации платежа передавать их не нужно:
+
+```ruby
+init = PayboxMoney::Payment::Init.new(
+  amount: '1000'
+  description: 'Test'
+)
+
+if init.success?
+  init.response.redirect_url
+else
+  init.response.error_description
+end
+```
 
 ## Development
 
@@ -38,4 +79,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
