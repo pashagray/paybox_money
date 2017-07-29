@@ -1,3 +1,9 @@
+require 'nokogiri'
+require 'nori'
+require 'net/http'
+require 'uri'
+require 'securerandom'
+
 require 'paybox_money/version'
 require 'paybox_money/constants'
 require 'paybox_money/utility'
