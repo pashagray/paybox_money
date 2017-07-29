@@ -2,9 +2,9 @@ module PayboxMoney
   class ApiWrapper
     attr_reader :request, :response, :url
 
-    def initialize(permitted_params:, required_params:, url:, default_params:, params:)
+    def initialize(permitted_params:, required_params:, url:, params:)
       @url = url
-      @params = default_params.merge(params)
+      @params = params
       @request = permitted_params.map { |p| ["pg_#{p}", @params[p]] if @params[p] }.compact.to_h
 
       if (required_params - @params.keys).any?
