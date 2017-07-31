@@ -1,6 +1,6 @@
 module PayboxMoney
   module Payment
-    class Status
+    class Status < ApiWrapper
       PERMITTED_PARAMS = %i(
         merchant_id
         payment_id
