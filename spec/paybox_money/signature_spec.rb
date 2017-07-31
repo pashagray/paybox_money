@@ -2,11 +2,11 @@ require 'spec_helper'
 
 RSpec.describe PayboxMoney::Signature do
 
-  secret_key = 'mypasskey'
   url = 'script.php'
   params = {
     pg_t_param: 'value3',
     pg_a_param: 'value1',
+    secret_key: 'mypasskey',
     pg_z_param: {
       pg_q_subparam: 'subvalue2',
       pg_m_subparam: 'subvalue1'
@@ -21,7 +21,6 @@ RSpec.describe PayboxMoney::Signature do
   it 'returns values in valid order' do
     expect(
       described_class.new(
-        secret_key: secret_key,
         url: url,
         params: params
       ).string_values
@@ -31,7 +30,6 @@ RSpec.describe PayboxMoney::Signature do
   it 'returns valid signature' do
     expect(
       described_class.new(
-        secret_key: secret_key,
         url: url,
         params: params
       ).result

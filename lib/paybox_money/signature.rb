@@ -8,9 +8,10 @@ module PayboxMoney
   # sig.result # => 'fwf32r32g83f0n'
   #
   class Signature
-    def initialize(secret_key:, url:, params:)
-      @secret_key = secret_key
+    def initialize(url:, params:)
       @url = url
+      @secret_key = params[:secret_key]
+      # @params = params.reject { |k, _v| k == :secret_key }
       @params = params
     end
 
@@ -19,12 +20,11 @@ module PayboxMoney
     end
 
     def string_values
-      [@url, Utility.flatten_hash(sorted_params).values, @secret_key].flatten.join(';')
+      [@url, Utility.flatten_hash(sorted_params).values].flatten.join(';')
     end
 
     def result
       Digest::MD5.hexdigest(string_values)
     end
-
   end
 end

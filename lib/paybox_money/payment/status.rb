@@ -14,21 +14,23 @@ module PayboxMoney
         payment_id
         salt
         sig
-        secret_key
       ).freeze
 
       def initialize(params = {})
         @params = Config.default_params.merge(params)
         @sig = Signature.new(
-          secret_key: params[:secret_key],
           url: STATUS_PAYMENT_URL,
           params: @params
-        ).result
+        )
+        puts @sig.string_values
+        puts @sig.result
         super(
           permitted_params: PERMITTED_PARAMS,
           required_params: REQUIRED_PARAMS,
           url: STATUS_PAYMENT_URL,
-          params: @params.merge(sig: @sig)
+          params: @params
+            .merge(sig: @sig.result)
+            .reject { |k, _v| k == :secret_key }
         )
       end
     end

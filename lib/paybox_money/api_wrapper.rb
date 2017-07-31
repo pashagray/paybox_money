@@ -22,7 +22,7 @@ module PayboxMoney
     end
 
     def request!
-      uri = URI(GATEWAY_URL + INIT_PAYMENT_URL)
+      uri = URI(GATEWAY_URL + @url)
       res = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
         req = Net::HTTP::Post.new(uri)
         req.set_form_data(@request)
