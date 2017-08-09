@@ -17,12 +17,11 @@ module PayboxMoney
       ).freeze
 
       def initialize(params = {})
-        @params = Config.default_params.merge(params)
         super(
           permitted_params: PERMITTED_PARAMS,
           required_params: REQUIRED_PARAMS,
           url: STATUS_PAYMENT_URL,
-          params: @params
+          params: Config.default_params.merge(params)
         )
       end
     end
