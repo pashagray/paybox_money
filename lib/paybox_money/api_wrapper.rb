@@ -3,10 +3,13 @@ module PayboxMoney
     attr_reader :request, :response, :url
 
     def initialize(permitted_params:, required_params:, url:, params:)
+      @sig = Signature.new(
+        url: url,
+        params: params
+      ).result
       @url = url
-      @params = params
+      @params = params.merge(sig: @sig).reject { |k, _v| k == :secret_key }
       @request = permitted_params.map { |p| ["pg_#{p}", @params[p]] if @params[p] }.compact.to_h
-
       if (required_params - @params.keys).any?
         raise(
           ParamsError,

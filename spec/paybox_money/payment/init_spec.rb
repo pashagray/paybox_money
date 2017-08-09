@@ -52,7 +52,7 @@ RSpec.describe PayboxMoney::Payment::Init do
         secret_key: 'RmRVKviOifpqtexL'
       )
 
-      expect(init.response).to eq(true)
+      expect(init.success?).to eq(true)
     end
 
     it 'makes unsuccessful request' do

@@ -45,22 +45,15 @@ module PayboxMoney
         amount
         description
         salt
-        sig
       ).freeze
 
       def initialize(params = {})
         @params = Config.default_params.merge(params)
-        @sig = Signature.new(
-          url: INIT_PAYMENT_URL,
-          params: @params
-        )
         super(
           permitted_params: PERMITTED_PARAMS,
           required_params: REQUIRED_PARAMS,
           url: INIT_PAYMENT_URL,
           params: @params
-            .merge(sig: @sig.result)
-            .reject { |k, _v| k == :secret_key }
         )
       end
     end
