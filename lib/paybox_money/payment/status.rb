@@ -13,7 +13,6 @@ module PayboxMoney
         merchant_id
         payment_id
         salt
-        sig
       ).freeze
 
       def initialize(params = {})
