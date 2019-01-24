@@ -11,8 +11,8 @@ module PayboxMoney
     def initialize(url:, params:)
       @url = url
       @secret_key = params[:secret_key]
-      # @params = params.reject { |k, _v| k == :secret_key }
-      @params = params
+      @params = params.reject { |k, _v| k == :secret_key }
+      # @params = params
     end
 
     def sorted_params
@@ -20,7 +20,7 @@ module PayboxMoney
     end
 
     def string_values
-      [@url, Utility.flatten_hash(sorted_params).values].flatten.join(';')
+      [@url, Utility.flatten_hash(sorted_params).values, @secret_key].flatten.join(';')
     end
 
     def result

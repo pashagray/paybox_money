@@ -4,15 +4,15 @@ RSpec.describe PayboxMoney::Signature do
 
   url = 'script.php'
   params = {
-    pg_t_param: 'value3',
-    pg_a_param: 'value1',
+    t_param: 'value3',
+    a_param: 'value1',
     secret_key: 'mypasskey',
-    pg_z_param: {
-      pg_q_subparam: 'subvalue2',
-      pg_m_subparam: 'subvalue1'
+    z_param: {
+      q_subparam: 'subvalue2',
+      m_subparam: 'subvalue1'
     },
-    pg_b_param: 'value2',
-    pg_salt: '9imM909TH820jwk387'
+    b_param: 'value2',
+    salt: '9imM909TH820jwk387'
   }
 
   result_values = 'script.php;value1;value2;9imM909TH820jwk387;value3;subvalue1;subvalue2;mypasskey'
