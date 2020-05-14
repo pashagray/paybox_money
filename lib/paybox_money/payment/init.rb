@@ -26,6 +26,7 @@ module PayboxMoney
         user_contact_email
         user_email
         user_ip
+        user_id
         language
         testing_mode
         recurring_start
@@ -53,7 +54,7 @@ module PayboxMoney
         super(
           permitted_params: PERMITTED_PARAMS,
           required_params: REQUIRED_PARAMS,
-          url: INIT_PAYMENT_URL,
+          url: url,
           params: Config.default_params.merge(params)
         )
       end
