@@ -4,7 +4,7 @@ module PayboxMoney
 
     def initialize(permitted_params:, required_params:, url:, params:)
 
-      logger.info <<-HEREDOC
+      ActiveRecord::Base.logger.info <<-HEREDOC
       '*--                                                      --*'
       '|                                                          |'
       "#{params}"
