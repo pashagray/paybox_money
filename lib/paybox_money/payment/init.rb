@@ -48,6 +48,8 @@ module PayboxMoney
       ).freeze
 
       def initialize(params = {})
+        url = params[:recurring_profile_id].present? ? RECURRENT_PAYMENT_URL : INIT_PAYMENT_URL
+
         super(
           permitted_params: PERMITTED_PARAMS,
           required_params: REQUIRED_PARAMS,
