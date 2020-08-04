@@ -31,6 +31,7 @@ module PayboxMoney
         testing_mode
         recurring_start
         recurring_lifetime
+        recurring_profile
         salt
         sig
         secret_key
@@ -49,7 +50,7 @@ module PayboxMoney
       ).freeze
 
       def initialize(params = {})
-        url = params[:recurring_profile_id].present? ? RECURRENT_PAYMENT_URL : INIT_PAYMENT_URL
+        url = params[:recurring_profile].present? ? RECURRENT_PAYMENT_URL : INIT_PAYMENT_URL
 
         super(
           permitted_params: PERMITTED_PARAMS,
