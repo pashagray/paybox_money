@@ -26,10 +26,12 @@ module PayboxMoney
         user_contact_email
         user_email
         user_ip
+        user_id
         language
         testing_mode
         recurring_start
         recurring_lifetime
+        recurring_profile
         salt
         sig
         secret_key
@@ -48,10 +50,12 @@ module PayboxMoney
       ).freeze
 
       def initialize(params = {})
+        url = params[:recurring_profile].present? ? RECURRENT_PAYMENT_URL : INIT_PAYMENT_URL
+
         super(
           permitted_params: PERMITTED_PARAMS,
           required_params: REQUIRED_PARAMS,
-          url: INIT_PAYMENT_URL,
+          url: url,
           params: Config.default_params.merge(params)
         )
       end
