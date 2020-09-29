@@ -3,16 +3,6 @@ module PayboxMoney
     attr_reader :request, :response, :url
 
     def initialize(permitted_params:, required_params:, url:, params:)
-
-      ActiveRecord::Base.logger.info <<-HEREDOC
-      '*--                                                      --*'
-      '|                                                          |'
-      "#{params}"
-      '|                                                          |'
-      '*_                                                        _*'
-      HEREDOC
-
-
       @sig = Signature.new(
         url: url,
         params: params
